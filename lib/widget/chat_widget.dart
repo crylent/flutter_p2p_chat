@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:chat/model/chat_event.dart';
 import 'package:chat/model/clear_chat_event.dart';
-import 'package:chat/model/companion.dart';
 import 'package:chat/model/message_event.dart';
 import 'package:flutter/material.dart';
 
@@ -34,12 +33,11 @@ class _ChatWidgetState extends State<ChatWidget> {
   final _textController = TextEditingController();
 
   void sendMessage() async {
-    log.d("Has listener: ${widget._streamController.hasListener}");
     final msg = await MessageEvent.make(_textController.text);
     final address = companion?.address;
     if (address != null && sockets[address] != null) {
       sockets[address]!.socket.write(msg.toJsonString());
-      messageHistory.registerMessage(const Companion.me(), msg);
+      messageHistory.registerMessage(companion!, msg);
       log.i("Sent message to $companion: $msg");
       _textController.clear();
     } else {

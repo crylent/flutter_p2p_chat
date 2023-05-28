@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:chat/main.dart';
 import 'package:chat/model/socket_info.dart';
 import 'package:chat/widget/chat_widget.dart';
@@ -20,6 +18,9 @@ class DeviceEntry extends StatelessWidget {
           companion = _socketInfo.companion;
           chatWidget = ChatWidget();
           Navigator.push(context, MaterialPageRoute(builder: (context) => chatWidget!));
+          messageHistory[companion]?.forEach((msg) {
+            chatWidget!.streamMessage(msg);
+          });
         },
         icon: const Icon(Icons.speaker_notes),
         label: const Text('Chat'),

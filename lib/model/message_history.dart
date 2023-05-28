@@ -6,7 +6,7 @@ import 'package:chat/model/message_event.dart';
 import 'companion.dart';
 
 class MessageHistory extends MapBase<Companion, List<MessageEvent>> {
-  final Map<Companion, List<MessageEvent>> _map = HashMap.identity();
+  final Map<Companion, List<MessageEvent>> _map = HashMap();
 
   @override List<MessageEvent>? operator [](Object? key) => _map[key];
   @override void operator []=(Companion key, List<MessageEvent> value) => _map[key] = value;
