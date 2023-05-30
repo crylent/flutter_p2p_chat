@@ -75,6 +75,7 @@ class _ChatWidgetState extends State<ChatWidget> {
     String chatTitle = '';
     if (companion != null) {
       chatTitle = companion!.name;
+      sockets[companion!.address]!.newMessages = 0;
     }
     return Scaffold(
       appBar: AppBar(
@@ -125,7 +126,6 @@ class _ChatWidgetState extends State<ChatWidget> {
   @override
   void dispose() {
     _streamSubscription.cancel();
-    widget._streamController.close();
     super.dispose();
   }
 }

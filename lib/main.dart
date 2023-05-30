@@ -48,7 +48,7 @@ Future<bool> tryConnect(String ip) async {
       final companion = Companion(deviceName, ip);
       if (responseMsg.content.isEmpty) {
         log.i('Found device: $deviceName (${socket.address.address})');
-        sockets[ip]?.deviceName = deviceName;
+        sockets[ip]!.deviceName = deviceName;
       } else {
         messageHistory.registerMessage(companion, responseMsg);
       }
@@ -71,7 +71,7 @@ Future<void> scanNetwork(LocalSubnet subnet) async {
         await scanNetwork(newSubnet);
         break;
       case LocalSubnetType.C:
-        if (!myIps.contains(ip)) tryConnect(ip);
+        if (!myIps.contains(ip) && !sockets.containsKey(ip)) tryConnect(ip);
         break;
     }
   }
@@ -103,6 +103,7 @@ void main() {
   runApp(const MyApp());
 
   startServer();
+  scanForServers();
 }
 
 class MyApp extends StatelessWidget {

@@ -19,9 +19,9 @@ class DevicesWidgetState extends State<DevicesWidget> {
   @override
   Widget build(BuildContext context) {
     final entries = <DeviceEntry>[];
-    sockets.forEach((key, socket) {
-      entries.add(DeviceEntry(socket));
-    });
+    for (var address in sockets.keys) {
+      entries.add(DeviceEntry(address));
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chats'),

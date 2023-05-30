@@ -7,6 +7,7 @@ import 'package:chat/model/companion.dart';
 class SocketInfo {
   String deviceName = Companion.nameUnknown;
   Socket socket;
+  int newMessages = 0;
 
   SocketInfo(this.socket);
 
