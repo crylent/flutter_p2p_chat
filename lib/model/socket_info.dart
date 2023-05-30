@@ -3,11 +3,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:chat/model/companion.dart';
+import 'package:flutter/cupertino.dart';
 
 class SocketInfo {
   String deviceName = Companion.nameUnknown;
   Socket socket;
-  int newMessages = 0;
 
   SocketInfo(this.socket);
 
@@ -24,4 +24,15 @@ class SocketInfo {
   }
 
   Companion get companion => Companion(deviceName, address);
+
+
+  ValueNotifier<int> newMessages = ValueNotifier(0);
+
+  void newMessage() {
+    newMessages.value += 1;
+  }
+
+  void resetCounter() {
+    newMessages.value = 0;
+  }
 }

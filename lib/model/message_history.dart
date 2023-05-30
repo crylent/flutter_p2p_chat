@@ -21,7 +21,7 @@ class MessageHistory extends MapBase<Companion, List<MessageEvent>> {
     _map[device]!.add(msg);
     if (device != const Companion.me()) {
       log.i("Got message from $device: $msg");
-      sockets[device.address]?.newMessages += 1;
+      sockets[device.address]?.newMessage();
     }
     if ((device == const Companion.me() || device == companion) && chatWidget != null) {
       chatWidget!.streamMessage(msg);

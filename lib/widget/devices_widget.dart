@@ -19,8 +19,8 @@ class DevicesWidgetState extends State<DevicesWidget> {
   @override
   Widget build(BuildContext context) {
     final entries = <DeviceEntry>[];
-    for (var address in sockets.keys) {
-      entries.add(DeviceEntry(address));
+    for (var socket in sockets.values) {
+      entries.add(DeviceEntry(socket));
     }
     return Scaffold(
       appBar: AppBar(
