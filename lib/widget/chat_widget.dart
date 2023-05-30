@@ -31,6 +31,15 @@ class _ChatWidgetState extends State<ChatWidget> {
   final List<MessageEvent> _messages = <MessageEvent>[];
 
   final _textController = TextEditingController();
+  final _scrollController = ScrollController();
+
+  void _scrollDown() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.bounceIn
+    );
+  }
 
   void sendMessage() async {
     final msg = await MessageEvent.make(_textController.text);
@@ -50,6 +59,7 @@ class _ChatWidgetState extends State<ChatWidget> {
       }
       log.e("Can't send message to $companion");
     }
+    _scrollDown();
   }
 
   @override
@@ -68,10 +78,6 @@ class _ChatWidgetState extends State<ChatWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final entries = <ChatEntry>[];
-    for (var msg in _messages) {
-      entries.add(ChatEntry(msg));
-    }
     String chatTitle = '';
     if (companion != null) {
       chatTitle = companion!.name;
@@ -85,11 +91,15 @@ class _ChatWidgetState extends State<ChatWidget> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: entries,
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(8),
+              controller: _scrollController,
+              itemCount: _messages.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ChatEntry(_messages[index]);
+              },
+            ),
           ),
           Align(
             alignment: Alignment.bottomLeft,
