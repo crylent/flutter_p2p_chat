@@ -6,47 +6,31 @@ import 'package:chat/model/message_event.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
+import '../model/companion.dart';
 import 'chat_entry.dart';
 
-class ChatWidget extends StatefulWidget {
-  ChatWidget({super.key});
+class ChatWidget extends StatelessWidget {
+  final Companion companion;
+  ChatWidget(this.companion, {super.key});
 
-  final StreamController<ChatEvent> _streamController = StreamController<ChatEvent>();
-
-  void streamMessage(MessageEvent msg) {
-    _streamController.add(msg);
-  }
-
-  void clearChat() {
-    _streamController.add(ClearChatEvent());
-  }
-
-  @override
-  State<StatefulWidget> createState() => _ChatWidgetState();
-}
-
-class _ChatWidgetState extends State<ChatWidget> {
-  late final _stream = widget._streamController.stream;
-  late final StreamSubscription<ChatEvent> _streamSubscription;
-  final List<MessageEvent> _messages = <MessageEvent>[];
-
+  final _streamController = StreamController<ChatEvent>();
   final _textController = TextEditingController();
   final _scrollController = ScrollController();
 
   void _scrollDown() {
     _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.bounceIn
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.bounceIn
     );
   }
 
-  void sendMessage() async {
+  void _sendMessage(BuildContext context) async {
     final msg = await MessageEvent.make(_textController.text);
-    final address = companion?.address;
-    if (address != null && sockets[address] != null) {
+    final address = companion.address;
+    if (sockets[address] != null) {
       sockets[address]!.socket.write(msg.toJsonString());
-      messageHistory.registerMessage(companion!, msg);
+      messageHistory.registerMessage(companion, msg);
       log.i("Sent message to $companion: $msg");
       _textController.clear();
     } else {
@@ -63,28 +47,11 @@ class _ChatWidgetState extends State<ChatWidget> {
   }
 
   @override
-  void initState() {
-    _streamSubscription = _stream.listen((event) {
-      if (event is MessageEvent) {
-        _messages.add(event);
-      }
-      else if (event is ClearChatEvent) {
-        _messages.clear();
-      }
-      setState(() {});
-    });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    String chatTitle = '';
-    if (companion != null) {
-      chatTitle = companion!.name;
-    }
+    final List<MessageEvent> messages = messageHistory[companion]!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(chatTitle),
+        title: Text(companion.name),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
@@ -92,12 +59,21 @@ class _ChatWidgetState extends State<ChatWidget> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8),
-              controller: _scrollController,
-              itemCount: _messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ChatEntry(_messages[index]);
+            child: StreamBuilder<ChatEvent>(
+              stream: _streamController.stream,
+              builder: (BuildContext context, AsyncSnapshot<ChatEvent> snapshot) {
+                final event = snapshot.data;
+                if (event is ClearChatEvent) {
+                  messages.clear();
+                }
+                return ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  controller: _scrollController,
+                  itemCount: messages.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ChatEntry(messages[index]);
+                  },
+                );
               },
             ),
           ),
@@ -109,7 +85,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                   child: TextField(
                     controller: _textController,
                     onSubmitted: (text) {
-                      sendMessage();
+                      _sendMessage(context);
                     },
                   ),
                 ),
@@ -118,7 +94,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                   child: FloatingActionButton(
                     heroTag: "button_send_msg",
                     onPressed: () {
-                      sendMessage();
+                      _sendMessage(context);
                     },
                     tooltip: 'Send message',
                     child: const Icon(Icons.question_answer),
@@ -132,9 +108,11 @@ class _ChatWidgetState extends State<ChatWidget> {
     );
   }
 
-  @override
-  void dispose() {
-    _streamSubscription.cancel();
-    super.dispose();
+  void streamMessage(MessageEvent msg) {
+    _streamController.add(msg);
+  }
+
+  void clearChat() {
+    _streamController.add(ClearChatEvent());
   }
 }

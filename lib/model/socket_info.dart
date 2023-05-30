@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:chat/model/companion.dart';
 import 'package:flutter/cupertino.dart';
 
+
 class SocketInfo {
   String deviceName = Companion.nameUnknown;
   Socket socket;
@@ -30,6 +31,7 @@ class SocketInfo {
 
   void newMessage() {
     newMessages.value += 1;
+    //log.d(newMessages.value.toString());
   }
 
   void resetCounter() {

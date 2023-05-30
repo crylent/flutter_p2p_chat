@@ -20,6 +20,7 @@ class DeviceEntry extends StatelessWidget {
       subtitle: Text(_socket.address),
       trailing: ValueListenableBuilder<int>(
         builder: (BuildContext context, int value, Widget? child) {
+          //log.d("Value listened: $value");
           Widget trailing;
           if (value > 0) {
             trailing = badges.Badge(
@@ -48,12 +49,11 @@ class DeviceEntry extends StatelessWidget {
         child: FloatingActionButton.extended(
           heroTag: 'chat_button_$heroId',
           onPressed: () {
-            companion = _socket.companion;
-            chatWidget = ChatWidget();
+            chatWidget = ChatWidget(_socket.companion);
             Navigator.push(context, MaterialPageRoute(builder: (context) => chatWidget!));
-            messageHistory[companion]?.forEach((msg) {
+            /*messageHistory[companion]?.forEach((msg) {
               chatWidget!.streamMessage(msg);
-            });
+            });*/
             _socket.resetCounter();
           },
           icon: const Icon(Icons.speaker_notes),

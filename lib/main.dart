@@ -37,7 +37,6 @@ const port = 6666;
 
 final messageHistory = MessageHistory();
 ChatWidget? chatWidget;
-Companion? companion;
 
 Future<bool> tryConnect(String ip) async {
   await Socket.connect(ip, port, timeout: const Duration(seconds: 5)).then((socket) async {
