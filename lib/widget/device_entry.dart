@@ -51,12 +51,9 @@ class DeviceEntry extends StatelessWidget {
           onPressed: () {
             chatWidget = ChatWidget(_socket.companion);
             Navigator.push(context, MaterialPageRoute(builder: (context) => chatWidget!));
-            /*messageHistory[companion]?.forEach((msg) {
-              chatWidget!.streamMessage(msg);
-            });*/
             _socket.resetCounter();
           },
-          icon: const Icon(Icons.speaker_notes),
+          icon: const Icon(Icons.chat),
           label: const Text('Chat'),
         ),
       ),

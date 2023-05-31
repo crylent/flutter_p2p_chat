@@ -8,6 +8,7 @@ import 'package:chat/widget/chat_widget.dart';
 import 'package:chat/widget/devices_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:window_manager/window_manager.dart';
 import 'model/companion.dart';
 import 'model/local_subnet.dart';
 import 'model/message_event.dart';
@@ -98,11 +99,18 @@ Future<void> startServer() async {
   }));
 }
 
-void main() {
-  runApp(const MyApp());
-
+void main() async {
   startServer();
   scanForServers();
+
+  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    WidgetsFlutterBinding.ensureInitialized();
+    final windowManager = WindowManager.instance;
+    await windowManager.ensureInitialized();
+    windowManager.setSize(const Size(450, 800));
+  }
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -112,6 +120,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.pink,
       ),

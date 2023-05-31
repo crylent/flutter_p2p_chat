@@ -82,11 +82,15 @@ class ChatWidget extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    onSubmitted: (text) {
-                      _sendMessage(context);
-                    },
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    child: TextField(
+                      controller: _textController,
+                      style: const TextStyle(fontSize: 20),
+                      onSubmitted: (text) {
+                        _sendMessage(context);
+                      },
+                    ),
                   ),
                 ),
                 Container(

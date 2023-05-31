@@ -9,14 +9,29 @@ class ChatEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String author;
+    Icon? leadingIcon;
+    Icon? trailingIcon;
+    Color color;
+    TextAlign align;
     if (_socketMsg.isMyMessage) {
       author = 'Me';
+      trailingIcon = const Icon(Icons.face);
+      color = Colors.pink.shade100;
+      align = TextAlign.end;
     } else {
       author = _socketMsg.deviceName;
+      leadingIcon = const Icon(Icons.face_5);
+      color = Colors.amber.shade100;
+      align = TextAlign.start;
     }
-    return ListTile(
-      title: Text(author),
-      subtitle: Text(_socketMsg.content),
+    return Card(
+      child: ListTile(
+        tileColor: color,
+        leading: leadingIcon,
+        trailing: trailingIcon,
+        title: Text(author, textAlign: align),
+        subtitle: Text(_socketMsg.content, textAlign: align),
+      ),
     );
   }
 }

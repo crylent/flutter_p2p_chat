@@ -31,7 +31,6 @@ class SocketInfo {
 
   void newMessage() {
     newMessages.value += 1;
-    //log.d(newMessages.value.toString());
   }
 
   void resetCounter() {
