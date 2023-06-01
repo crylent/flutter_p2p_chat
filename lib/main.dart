@@ -23,8 +23,10 @@ Future<Set<LocalSubnet>> getLocalSubnets() async {
       for (var address in interface.addresses) {
         if (address.type != InternetAddressType.IPv4) continue;
         final subnet = LocalSubnet.fromAddress(address);
-        if (subnet != null && subnets.add(subnet)) {
-          log.i('Found local subnet: $subnet (${subnet.type.name}-class)');
+        if (subnet != null) {
+          if (subnets.add(subnet)) {
+            log.i('Found local subnet: $subnet (${subnet.type.name}-class)');
+          }
           myIps.add(address.address);
         }
       }
