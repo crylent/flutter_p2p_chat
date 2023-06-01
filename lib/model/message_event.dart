@@ -59,4 +59,8 @@ class MessageEvent implements ChatEvent {
     final deviceName = await _getDeviceName();
     return MessageEvent._construct(true, deviceName, content);
   }
+
+  static writeEmptyToSocket(Socket socket) async {
+    socket.write((await MessageEvent.empty()).toJsonString());
+  }
 }

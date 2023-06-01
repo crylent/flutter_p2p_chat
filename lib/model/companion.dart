@@ -12,11 +12,10 @@ class Companion {
       identical(this, other) ||
       other is Companion &&
           runtimeType == other.runtimeType &&
-          name == other.name &&
           address == other.address;
 
   @override
-  int get hashCode => name.hashCode ^ address.hashCode;
+  int get hashCode => address.hashCode;
 
   const Companion.me() :
       name = 'Me',

@@ -13,6 +13,7 @@ class SocketInfo {
   SocketInfo(this.socket);
 
   String get address => socket.address.address;
+  bool get nameIsUnknown => (deviceName == Companion.nameUnknown);
 
   StreamSubscription<Uint8List> listen(Function(Uint8List event)? onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) {

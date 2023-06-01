@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:chat/model/message_history.dart';
@@ -48,10 +47,12 @@ Future<bool> tryConnect(String ip) async {
       final responseMsg = MessageEvent.fromRaw(response, socket.encoding);
       final deviceName = responseMsg.deviceName;
       final companion = Companion(deviceName, ip);
-      if (responseMsg.content.isEmpty) {
+      if (sockets[ip]!.nameIsUnknown) {
         log.i('Found device: $deviceName (${socket.address.address})');
         sockets[ip]!.deviceName = deviceName;
-      } else {
+        MessageEvent.writeEmptyToSocket(socket);
+      }
+      if (responseMsg.content.isNotEmpty) {
         messageHistory.registerMessage(companion, responseMsg);
       }
     });
@@ -91,12 +92,17 @@ Future<void> startServer() async {
   server.then((srv) => srv.listen((socket) async {
     final address = socket.remoteAddress.address;
     log.i('$address opened connection');
-    socket.write(jsonEncode(await MessageEvent.empty()));
+    MessageEvent.writeEmptyToSocket(socket);
     sockets[address] = SocketInfo(socket);
     socket.listen((response) async {
       final responseMsg = MessageEvent.fromRaw(response, socket.encoding);
       final companion = Companion(responseMsg.deviceName, address);
-      messageHistory.registerMessage(companion, responseMsg);
+      if (sockets[address]!.nameIsUnknown) {
+        sockets[address]!.deviceName = companion.name;
+      }
+      if (responseMsg.content.isNotEmpty) {
+        messageHistory.registerMessage(companion, responseMsg);
+      }
     });
   }));
 }
