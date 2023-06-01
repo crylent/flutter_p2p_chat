@@ -52,9 +52,7 @@ Future<bool> tryConnect(String ip) async {
         sockets[ip]!.deviceName = deviceName;
         MessageEvent.writeEmptyToSocket(socket);
       }
-      if (responseMsg.content.isNotEmpty) {
-        messageHistory.registerMessage(companion, responseMsg);
-      }
+      messageHistory.registerMessage(companion, responseMsg);
     });
     return true;
   }).catchError((error) => false);
@@ -100,9 +98,7 @@ Future<void> startServer() async {
       if (sockets[address]!.nameIsUnknown) {
         sockets[address]!.deviceName = companion.name;
       }
-      if (responseMsg.content.isNotEmpty) {
-        messageHistory.registerMessage(companion, responseMsg);
-      }
+      messageHistory.registerMessage(companion, responseMsg);
     });
   }));
 }

@@ -24,6 +24,7 @@ class MessageHistory extends MapBase<Companion, List<MessageEvent>> {
   }
 
   void registerMessage(Companion companion, MessageEvent msg) {
+    if (msg.content.isEmpty) return;
     _createKeyIfNeed(companion);
     _map[companion]!.add(msg);
     final chatIsOpened = companion == chatWidget?.companion;
